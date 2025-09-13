@@ -4,8 +4,9 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch src/infra/http/server.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "tsx watch --env-file .env src/infra/http/server.ts",
+    "test": "dotenv -e .env.test -- vitest run",
+    "test:watch": "dotenv -e .env.test -- vitest"
   },
   "author": "Edgar Bertelli Bottini",
   "license": "ISC",
@@ -13,11 +14,19 @@
   "devDependencies": {
     "@biomejs/biome": "^2.2.4",
     "@types/node": "^24.3.3",
+    "dotenv-cli": "^10.0.0",
+    "drizzle-kit": "^0.31.4",
     "tsx": "^4.20.5",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "@fastify/cors": "^11.1.0",
+    "@fastify/multipart": "^9.2.1",
+    "@fastify/swagger": "^9.5.1",
+    "@fastify/swagger-ui": "^5.2.3",
+    "drizzle-orm": "^0.44.5",
     "fastify": "^5.6.0",
     "fastify-type-provider-zod": "^6.0.0",
     "zod": "^4.1.8"
