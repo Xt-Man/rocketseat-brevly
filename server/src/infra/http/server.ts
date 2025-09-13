@@ -10,6 +10,7 @@ import {
   validatorCompiler,
 } from 'fastify-type-provider-zod'
 import { env } from '@/env'
+import { createShortUrlRoute } from './routes/create-short-url'
 import { helloRoute } from './routes/hello'
 
 const server = fastify()
@@ -19,6 +20,7 @@ server.setSerializerCompiler(serializerCompiler)
 
 server.setErrorHandler((error, _request, reply) => {
   if (hasZodFastifySchemaValidationErrors(error)) {
+    console.log(error.validation)
     return reply.status(400).send({
       message: 'Validation error',
       issues: error.validation,
@@ -50,6 +52,7 @@ server.register(fastifySwaggerUi, {
 
 // registrar as rotas
 server.register(helloRoute)
+server.register(createShortUrlRoute)
 
 console.log(env.DATABASE_URL)
 
