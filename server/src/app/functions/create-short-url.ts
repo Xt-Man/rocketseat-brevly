@@ -2,16 +2,16 @@ import type z from 'zod/v4'
 import { db } from '@/infra/db'
 import { schema } from '@/infra/db/schemas'
 import { type Either, makeLeft, makeRight } from '@/infra/shared/either'
-import { createShortUrlDto } from './dtos/create-short-url'
 import { DuplicatedShortUrlError } from './erros/duplicated-short-url'
+import { createShortUrlSchema } from './schemas/create-short-url'
 
-type ShortUrlInput = z.infer<typeof createShortUrlDto>
+type CreateShortUrlInput = z.infer<typeof createShortUrlSchema>
 
 export async function createShortUrl(
-  input: ShortUrlInput
+  input: CreateShortUrlInput
 ): Promise<Either<DuplicatedShortUrlError, { id: string }>> {
   const { originalUrl, shortenedUrl: shortened } =
-    createShortUrlDto.parse(input)
+    createShortUrlSchema.parse(input)
 
   const result = await db
     .insert(schema.urls)

@@ -1,8 +1,8 @@
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import z from 'zod/v4'
 import { createShortUrl } from '@/app/functions/create-short-url'
-import { createShortUrlDto } from '@/app/functions/dtos/create-short-url'
 import { isDuplicatedShortUrlError } from '@/app/functions/erros/duplicated-short-url'
+import { createShortUrlSchema } from '@/app/functions/schemas/create-short-url'
 import { isRight, unwrapEither } from '@/infra/shared/either'
 
 export const createShortUrlRoute: FastifyPluginAsyncZod = async server => {
@@ -11,7 +11,7 @@ export const createShortUrlRoute: FastifyPluginAsyncZod = async server => {
     {
       schema: {
         summary: 'Create a shortened URL',
-        body: createShortUrlDto,
+        body: createShortUrlSchema,
         response: {
           201: z.object({
             id: z.string(),

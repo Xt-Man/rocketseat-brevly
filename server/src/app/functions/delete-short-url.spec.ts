@@ -1,0 +1,29 @@
+import { eq } from 'drizzle-orm'
+import { describe, expect, it } from 'vitest'
+import { db } from '@/infra/db'
+import { schema } from '@/infra/db/schemas'
+import { isLeft, isRight } from '@/infra/shared/either'
+import { seedUrls } from '@/testes/utils/urls-fixtures'
+import { deleteShortUrl } from './delete-short-url'
+
+describe('deleteShortUrl', () => {
+  it('should not be able to delete an inexistent shortened url', async () => {
+    const sut = await deleteShortUrl('not-found-id')
+    expect(isLeft(sut)).toBeTruthy()
+  })
+
+  it('should be able to delete an existent shortened url', async () => {
+    const urls = await seedUrls(1)
+
+    const sut = await deleteShortUrl(urls[0].id)
+
+    expect(isRight(sut)).toBeTruthy()
+
+    const result = await db
+      .select()
+      .from(schema.urls)
+      .where(eq(schema.urls.id, urls[0].id))
+
+    expect(result).toHaveLength(0)
+  })
+})

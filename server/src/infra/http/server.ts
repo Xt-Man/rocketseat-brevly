@@ -11,6 +11,8 @@ import {
 } from 'fastify-type-provider-zod'
 import { env } from '@/env'
 import { createShortUrlRoute } from './routes/create-short-url'
+import { deleteShortUrlRoute } from './routes/delete-short-url'
+import { getOriginalUrlByShortRoute } from './routes/get-original-url-by-short'
 import { helloRoute } from './routes/hello'
 
 const server = fastify()
@@ -53,6 +55,8 @@ server.register(fastifySwaggerUi, {
 // registrar as rotas
 server.register(helloRoute)
 server.register(createShortUrlRoute)
+server.register(deleteShortUrlRoute)
+server.register(getOriginalUrlByShortRoute)
 
 console.log(env.DATABASE_URL)
 
