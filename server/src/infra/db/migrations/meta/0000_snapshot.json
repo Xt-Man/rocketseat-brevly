@@ -48,9 +48,7 @@
         "urls_shortened_url_unique": {
           "name": "urls_shortened_url_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "shortened_url"
-          ]
+          "columns": ["shortened_url"]
         }
       },
       "policies": {},

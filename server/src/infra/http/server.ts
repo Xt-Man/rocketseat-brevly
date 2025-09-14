@@ -14,6 +14,7 @@ import { createShortUrlRoute } from './routes/create-short-url'
 import { deleteShortUrlRoute } from './routes/delete-short-url'
 import { getOriginalUrlByShortRoute } from './routes/get-original-url-by-short'
 import { helloRoute } from './routes/hello'
+import { listShortUrlsRoute } from './routes/list-short-urls'
 
 const server = fastify()
 
@@ -57,6 +58,7 @@ server.register(helloRoute)
 server.register(createShortUrlRoute)
 server.register(deleteShortUrlRoute)
 server.register(getOriginalUrlByShortRoute)
+server.register(listShortUrlsRoute)
 
 console.log(env.DATABASE_URL)
 

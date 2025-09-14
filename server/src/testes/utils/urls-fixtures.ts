@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker'
+import type { urlInterface } from '@/app/functions/interface/url'
 import { db } from '@/infra/db'
 import { schema } from '@/infra/db/schemas'
 
@@ -12,7 +13,7 @@ export function generateFakeUrl() {
   }
 }
 
-export async function seedUrls(count = 1) {
+export async function seedUrls(count = 1): Promise<urlInterface[]> {
   const urls = Array.from({ length: count }, generateFakeUrl)
 
   return await db
@@ -30,5 +31,7 @@ export async function seedUrls(count = 1) {
       id: schema.urls.id,
       shortenedUrl: schema.urls.shortenedUrl,
       originalUrl: schema.urls.originalUrl,
+      accessCount: schema.urls.accessCount,
+      createdAt: schema.urls.createdAt,
     })
 }
