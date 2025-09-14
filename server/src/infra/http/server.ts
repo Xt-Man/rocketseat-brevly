@@ -12,6 +12,7 @@ import {
 import { env } from '@/env'
 import { createShortUrlRoute } from './routes/create-short-url'
 import { deleteShortUrlByIdRoute } from './routes/delete-short-url-by-id'
+import { exportUrlsCsvRoute } from './routes/export-urls-csv'
 import { getOriginalUrlByShortRoute } from './routes/get-original-url-by-short'
 import { helloRoute } from './routes/hello'
 import { listShortUrlsRoute } from './routes/list-short-urls'
@@ -59,6 +60,7 @@ server.register(createShortUrlRoute)
 server.register(deleteShortUrlByIdRoute)
 server.register(getOriginalUrlByShortRoute)
 server.register(listShortUrlsRoute)
+server.register(exportUrlsCsvRoute)
 
 console.log(env.DATABASE_URL)
 
