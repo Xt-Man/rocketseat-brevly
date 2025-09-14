@@ -1,7 +1,9 @@
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import z from 'zod/v4'
-import { db } from '@/infra/db'
-import { schema } from '@/infra/db/schemas'
+import { createShortUrl } from '@/app/functions/create-short-url'
+import { createShortUrlDto } from '@/app/functions/dtos/create-short-url'
+import { isDuplicatedShortUrlError } from '@/app/functions/erros/duplicated-short-url'
+import { isRight, unwrapEither } from '@/infra/shared/either'
 
 export const createShortUrlRoute: FastifyPluginAsyncZod = async server => {
   server.post(
@@ -9,13 +11,7 @@ export const createShortUrlRoute: FastifyPluginAsyncZod = async server => {
     {
       schema: {
         summary: 'Create a shortened URL',
-        body: z.object({
-          originalUrl: z.url(),
-          shortened: z
-            .string()
-            .max(255)
-            .regex(/^[a-zA-Z0-9_-]+$/),
-        }),
+        body: createShortUrlDto,
         response: {
           201: z.object({
             id: z.string(),
@@ -27,16 +23,21 @@ export const createShortUrlRoute: FastifyPluginAsyncZod = async server => {
       },
     },
     async (request, reply) => {
-      const { originalUrl, shortened } = request.body
+      const { originalUrl, shortenedUrl: shortened } = request.body
 
-      const _result = await db.insert(schema.urls).values({
+      const result = await createShortUrl({
         originalUrl,
         shortenedUrl: shortened,
       })
 
-      return reply.status(201).send({
-        id: 'pegar o id',
-      })
+      if (isRight(result)) return reply.status(201).send(unwrapEither(result))
+
+      const error = unwrapEither(result)
+
+      if (isDuplicatedShortUrlError(error))
+        return reply
+          .status(400)
+          .send({ message: 'Shortened url already exists' })
     }
   )
 }
