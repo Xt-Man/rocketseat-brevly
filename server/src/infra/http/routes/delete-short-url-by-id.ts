@@ -1,10 +1,10 @@
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod/v4'
-import { deleteShortUrl } from '@/app/functions/delete-short-url'
+import { deleteShortUrlById } from '@/app/functions/delete-short-url-by-id'
 import { isNotFoundShortUrlError } from '@/app/functions/erros/not-found-short-url'
 import { isRight, unwrapEither } from '@/infra/shared/either'
 
-export const deleteShortUrlRoute: FastifyPluginAsyncZod = async server => {
+export const deleteShortUrlByIdRoute: FastifyPluginAsyncZod = async server => {
   server.delete(
     '/urls/:id',
     {
@@ -24,7 +24,7 @@ export const deleteShortUrlRoute: FastifyPluginAsyncZod = async server => {
     async (request, reply) => {
       const { id } = request.params
 
-      const result = await deleteShortUrl(id)
+      const result = await deleteShortUrlById(id)
 
       if (isRight(result)) return reply.status(204).send()
 

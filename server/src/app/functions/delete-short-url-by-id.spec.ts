@@ -4,7 +4,7 @@ import { db } from '@/infra/db'
 import { schema } from '@/infra/db/schemas'
 import { isLeft, isRight } from '@/infra/shared/either'
 import { seedUrls } from '@/testes/utils/urls-fixtures'
-import { deleteShortUrl } from './delete-short-url'
+import { deleteShortUrlById } from './delete-short-url-by-id'
 
 describe('deleteShortUrl', () => {
   beforeEach(async () => {
@@ -12,14 +12,14 @@ describe('deleteShortUrl', () => {
   })
 
   it('should not be able to delete an inexistent shortened url', async () => {
-    const sut = await deleteShortUrl('not-found-id')
+    const sut = await deleteShortUrlById('not-found-id')
     expect(isLeft(sut)).toBeTruthy()
   })
 
   it('should be able to delete an existent shortened url', async () => {
     const urls = await seedUrls(1)
 
-    const sut = await deleteShortUrl(urls[0].id)
+    const sut = await deleteShortUrlById(urls[0].id)
 
     expect(isRight(sut)).toBeTruthy()
 

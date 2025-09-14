@@ -4,7 +4,7 @@ import { schema } from '@/infra/db/schemas'
 import { type Either, makeLeft, makeRight } from '@/infra/shared/either'
 import { NotFoundShortUrlError } from './erros/not-found-short-url'
 
-export async function deleteShortUrl(
+export async function deleteShortUrlById(
   id: string
 ): Promise<Either<NotFoundShortUrlError, null>> {
   const result = await db
