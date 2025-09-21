@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { BACKEND_URL } from '../utils/constants'
+import type { UrlItem } from '../interfaces/urlItem'
 
 const api = axios.create({
   baseURL: BACKEND_URL ?? '/api'
@@ -7,9 +8,9 @@ const api = axios.create({
 
 export async function getOriginalUrlByShort(shortenedUrl: string): Promise<{ originalUrl: string }> {
 
-  return new Promise((resolve) => setTimeout(resolve, 2000)).then(async () => {
-    return { originalUrl: "https://google.com" }
-  })
+  // return new Promise((resolve) => setTimeout(resolve, 2000)).then(async () => {
+  //   return { originalUrl: "https://google.com" }
+  // })
 
   const { data, status } = await api.get<{ originalUrl: string }>(`/urls/${shortenedUrl}`)
 
@@ -17,4 +18,27 @@ export async function getOriginalUrlByShort(shortenedUrl: string): Promise<{ ori
     throw new Error('URL not found')
   }
   return data
+}
+
+export async function getListUrls(): Promise<UrlItem[]> {
+  const { data, status } = await api.get('/urls')
+  if (status !== 200) {
+    throw new Error('Error fetching URLs')
+  }
+  return data as UrlItem[]
+}
+
+export async function removeUrlById(id: string): Promise<boolean> {
+  const { status } = await api.delete(`/urls/${id}`)
+
+  return status === 204
+}
+
+export async function getCsvLink(): Promise<string> {
+  const { data, status } = await api.post('/urls/csv', {})
+
+  if (status === 200)
+    return data.exportedCsvUrl
+
+  return ''
 }
