@@ -18,7 +18,7 @@ export default function Urls() {
           {urls?.map((url) => (
               <div key={url.id} className="flex justify-between items-center py-4 border-t border-gray-200">
                   <div className="flex flex-col gap-2">
-                      <a className="typography-md text-blue" onClick={() => incrementAccess(url.id)} href={getShortenedUrl(url.shortenedUrl)} target="_blank">
+                      <a className="typography-md-semibold text-blue" onClick={() => incrementAccess(url.id)} href={getShortenedUrl(url.shortenedUrl)} target="_blank">
                         {`brev.ly/${url.shortenedUrl}`}</a>
                       <span className="typography-sm text-gray-500">{url.originalUrl}</span>
                   </div>

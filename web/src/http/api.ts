@@ -8,10 +8,6 @@ const api = axios.create({
 
 export async function getOriginalUrlByShort(shortenedUrl: string): Promise<{ originalUrl: string }> {
 
-  // return new Promise((resolve) => setTimeout(resolve, 2000)).then(async () => {
-  //   return { originalUrl: "https://google.com" }
-  // })
-
   const { data, status } = await api.get<{ originalUrl: string }>(`/urls/${shortenedUrl}`)
 
   if (status !== 200) {
@@ -41,4 +37,10 @@ export async function getCsvLink(): Promise<string> {
     return data.exportedCsvUrl
 
   return ''
+}
+
+export async function createShortUrl(originalUrl: string, shortenedUrl: string): Promise<void> {
+  
+  await api.post('/urls', { originalUrl, shortenedUrl })
+
 }

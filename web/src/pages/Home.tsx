@@ -9,11 +9,14 @@ import LinkIcon from "@/assets/link-icon.svg"
 import Urls from "@/components/Urls"
 import Button from "@/components/ui/Button"
 import { IconDownload } from "@tabler/icons-react"
-import { getCsvLink } from "@/http/api"
+import { createShortUrl, getCsvLink } from "@/http/api"
+import { toast } from "react-toastify"
+import { useMutation } from "@tanstack/react-query"
+import { AxiosError } from "axios"
 
 const formSchema = z.object({
   originalUrl: z.url({ message: "Informe uma url válida" }),
-  shortenedUrl: z.string().min(1).regex(/^[a-z]+$/, 'Informe uma url minúscula e sem, espaço/caracter especial'),
+  shortenedUrl: z.string().regex(/^[a-z0-9-]+$/, 'Informe uma url minúscula e sem, espaço/caracter especial'),
 })
 
 export default function Home() {
@@ -25,12 +28,27 @@ export default function Home() {
     fetchUrls()
   }, [fetchUrls])
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors }, reset } = useForm({
     resolver: zodResolver(formSchema)
   })
 
-  const onSubmit = (data: any) => {
-    console.log(data)
+  const createShortUrlMutation = useMutation({
+    mutationFn: ({ originalUrl, shortenedUrl }: { originalUrl: string, shortenedUrl: string }) => createShortUrl(originalUrl, shortenedUrl),
+    onSuccess: () => {
+      reset()
+      fetchUrls()
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError && error.response?.status === 400) {
+        toast.error(error.response?.data.message, { position: "bottom-right" })
+      } else {
+        toast.error('Erro ao salvar URL encurtada', { position: "bottom-right" })
+      }
+    }
+  })
+
+  const onSubmit = async (data: {originalUrl: string, shortenedUrl: string}) => {
+    createShortUrlMutation.mutate({ originalUrl: data.originalUrl, shortenedUrl: data.shortenedUrl })
   }
   
   return (
@@ -51,7 +69,9 @@ export default function Home() {
                 <TextInput id="shortenedUrl" error={errors.shortenedUrl?.message} label="Link Encurtado" prefix="brev.ly/" {...register('shortenedUrl')} />
               </div>
             </>
-            <button type="submit">Submit</button>
+            <Button type="submit" disabled={createShortUrlMutation.isPending}>
+              {createShortUrlMutation.isPending ? 'Salvando...' : 'Salvar Link'}
+            </Button>
           </form>
 
           <div className="flex flex-col bg-gray-100 rounded-2xl p-8 gap-4 w-11/12 lg:w-3/5">

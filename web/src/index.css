@@ -41,6 +41,13 @@
     font-weight: 600;
     text-transform: none;
 }
+.typography-md-semibold {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: 700;
+    text-transform: none;
+}
 
 .typography-sm {
     font-family: var(--font-sans);
