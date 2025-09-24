@@ -1,4 +1,4 @@
-import Logo from "@/assets/Logo.svg"
+import Logo from "@/assets/logo.svg"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
