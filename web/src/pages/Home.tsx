@@ -9,7 +9,6 @@ import LinkIcon from "@/assets/link-icon.svg"
 import Urls from "@/components/Urls"
 import Button from "@/components/ui/Button"
 import { IconDownload } from "@tabler/icons-react"
-import { getCsvLink } from "@/http/api"
 import LoadingStrip from "@/components/ui/LoadingStrip"
 import { useCreateShortUrl } from "@/hooks/useCreateShortUrl"
 import { useFetchUrls } from "@/hooks/useFetchUrls"
@@ -25,8 +24,6 @@ export default function Home() {
 
   const hasUrls = useUrlStore((state) => state.hasUrls())
   const setUrls = useUrlStore((state) => state.setUrls)
-  const removeUrl = useUrlStore((state) => state.removeUrl)
-  //const fetchUrls = useUrlStore((state) => state.fetchUrls)
 
   const createShortUrlMutation = useCreateShortUrl()
   const fetchUrlsMutation = useFetchUrls({
@@ -40,7 +37,7 @@ export default function Home() {
     }
   })
   const removeUrlMutation = useRemoveUrl({
-    onSuccess: (data) => {
+    onSuccess: () => {
       fetchUrlsMutation.mutate()
     }
   })
@@ -53,21 +50,6 @@ export default function Home() {
     resolver: zodResolver(formSchema)
   })
 
-  // const createShortUrlMutation = useMutation({
-  //   mutationFn: ({ originalUrl, shortenedUrl }: { originalUrl: string, shortenedUrl: string }) => createShortUrl(originalUrl, shortenedUrl),
-  //   onSuccess: () => {
-  //     reset()
-  //     fetchUrls()
-  //   },
-  //   onError: (error) => {
-  //     if (error instanceof AxiosError && error.response?.status === 400) {
-  //       toast.error(error.response?.data.message, { position: "bottom-right" })
-  //     } else {
-  //       toast.error('Erro ao salvar URL encurtada', { position: "bottom-right" })
-  //     }
-  //   }
-  // })
-
   const onSubmit = async (data: {originalUrl: string, shortenedUrl: string}) => {
     createShortUrlMutation.mutate(
       { originalUrl: data.originalUrl, shortenedUrl: data.shortenedUrl },
@@ -79,6 +61,9 @@ export default function Home() {
       }
     )
   }
+
+  console.log('isPending', fetchUrlsMutation.isPending, getCsvLinkMutation.isPending, removeUrlMutation.isPending)
+  console.log((fetchUrlsMutation.isPending || getCsvLinkMutation.isPending || removeUrlMutation.isPending))
   
   return (
     <div className="h-dvh flex justify-center">

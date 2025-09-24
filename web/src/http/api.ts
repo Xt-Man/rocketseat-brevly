@@ -17,10 +17,8 @@ export async function getOriginalUrlByShort(shortenedUrl: string): Promise<{ ori
 }
 
 export async function getListUrls(): Promise<UrlItem[]> {
-  const { data, status } = await api.get('/urls')
-  // if (status !== 200) {
-  //   throw new Error('Error fetching URLs')
-  // }
+  const { data } = await api.get('/urls')
+
   return data as UrlItem[]
 }
 

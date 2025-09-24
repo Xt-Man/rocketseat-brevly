@@ -1,7 +1,7 @@
 // src/store/urlStore.ts
 import { create } from "zustand"
 import type { UrlItem } from "../interfaces/urlItem"
-import { getListUrls, removeUrlById } from "../http/api"
+import { getListUrls } from "../http/api"
 
 // Definição do estado e das ações
 interface UrlStore {
