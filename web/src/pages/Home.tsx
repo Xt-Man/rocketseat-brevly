@@ -9,10 +9,12 @@ import LinkIcon from "@/assets/link-icon.svg"
 import Urls from "@/components/Urls"
 import Button from "@/components/ui/Button"
 import { IconDownload } from "@tabler/icons-react"
-import { createShortUrl, getCsvLink } from "@/http/api"
-import { toast } from "react-toastify"
-import { useMutation } from "@tanstack/react-query"
-import { AxiosError } from "axios"
+import { getCsvLink } from "@/http/api"
+import LoadingStrip from "@/components/ui/LoadingStrip"
+import { useCreateShortUrl } from "@/hooks/useCreateShortUrl"
+import { useFetchUrls } from "@/hooks/useFetchUrls"
+import { useGetCsvLink } from "@/hooks/useGetCsvLink"
+import { useRemoveUrl } from "@/hooks/useRemoveUrl"
 
 const formSchema = z.object({
   originalUrl: z.url({ message: "Informe uma url válida" }),
@@ -22,33 +24,60 @@ const formSchema = z.object({
 export default function Home() {
 
   const hasUrls = useUrlStore((state) => state.hasUrls())
-  const fetchUrls = useUrlStore((state) => state.fetchUrls)
+  const setUrls = useUrlStore((state) => state.setUrls)
+  const removeUrl = useUrlStore((state) => state.removeUrl)
+  //const fetchUrls = useUrlStore((state) => state.fetchUrls)
+
+  const createShortUrlMutation = useCreateShortUrl()
+  const fetchUrlsMutation = useFetchUrls({
+    onSuccess: (data) => {
+      setUrls(data)
+    }
+  })
+  const getCsvLinkMutation = useGetCsvLink({
+    onSuccess: (data) => {
+      window.location.assign(data)
+    }
+  })
+  const removeUrlMutation = useRemoveUrl({
+    onSuccess: (data) => {
+      fetchUrlsMutation.mutate()
+    }
+  })
 
   useEffect(() => {
-    fetchUrls()
-  }, [fetchUrls])
+    fetchUrlsMutation.mutate()
+}, [])
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm({
     resolver: zodResolver(formSchema)
   })
 
-  const createShortUrlMutation = useMutation({
-    mutationFn: ({ originalUrl, shortenedUrl }: { originalUrl: string, shortenedUrl: string }) => createShortUrl(originalUrl, shortenedUrl),
-    onSuccess: () => {
-      reset()
-      fetchUrls()
-    },
-    onError: (error) => {
-      if (error instanceof AxiosError && error.response?.status === 400) {
-        toast.error(error.response?.data.message, { position: "bottom-right" })
-      } else {
-        toast.error('Erro ao salvar URL encurtada', { position: "bottom-right" })
-      }
-    }
-  })
+  // const createShortUrlMutation = useMutation({
+  //   mutationFn: ({ originalUrl, shortenedUrl }: { originalUrl: string, shortenedUrl: string }) => createShortUrl(originalUrl, shortenedUrl),
+  //   onSuccess: () => {
+  //     reset()
+  //     fetchUrls()
+  //   },
+  //   onError: (error) => {
+  //     if (error instanceof AxiosError && error.response?.status === 400) {
+  //       toast.error(error.response?.data.message, { position: "bottom-right" })
+  //     } else {
+  //       toast.error('Erro ao salvar URL encurtada', { position: "bottom-right" })
+  //     }
+  //   }
+  // })
 
   const onSubmit = async (data: {originalUrl: string, shortenedUrl: string}) => {
-    createShortUrlMutation.mutate({ originalUrl: data.originalUrl, shortenedUrl: data.shortenedUrl })
+    createShortUrlMutation.mutate(
+      { originalUrl: data.originalUrl, shortenedUrl: data.shortenedUrl },
+      {
+        onSuccess: () => {
+          reset()
+          fetchUrlsMutation.mutate()
+        },
+      }
+    )
   }
   
   return (
@@ -75,13 +104,22 @@ export default function Home() {
           </form>
 
           <div className="flex flex-col bg-gray-100 rounded-2xl p-8 gap-4 w-11/12 lg:w-3/5">
+              <div className="flex flex-1 items-center justify-center">
+                <LoadingStrip 
+                  className="flex flex-1 w-full"
+                  disabled={!(fetchUrlsMutation.isPending || getCsvLinkMutation.isPending || removeUrlMutation.isPending)}
+                />
+              </div>
             <div className="flex justify-between items-center gap-4">
               <p className="typography-lg text-gray-600">Meus links</p>
-              <Button className="h-8" icon={<IconDownload size={16} className="text-gray-600" />} secondary onClick={async () => {
-                console.log('Download CSV')
-                const exportUrl = await getCsvLink();
-                window.location.assign(exportUrl);
-              }}>Baixar CSV</Button>
+              <Button className="h-8" 
+                icon={<IconDownload size={16}
+                className="text-gray-600" />}
+                disabled={getCsvLinkMutation.isPending || removeUrlMutation.isPending || !hasUrls}
+                secondary 
+                onClick={async () => {
+                  getCsvLinkMutation.mutate()
+                }}>Baixar CSV</Button>
             </div>
 
             {!hasUrls && (
@@ -92,7 +130,7 @@ export default function Home() {
             )}
 
             {hasUrls && (
-              <Urls />
+              <Urls fnRemove={removeUrlMutation} />
             )}
 
           </div>

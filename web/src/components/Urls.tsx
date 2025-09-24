@@ -5,16 +5,22 @@ import { IconCopy, IconTrash } from "@tabler/icons-react"
 import Button from "./ui/Button"
 import { copyToClipboard } from "@/utils/copy-to-clipboard"
 import { toast } from "react-toastify"
+import type { UseMutationResult } from "@tanstack/react-query"
+import type { RemoveUrlArgs } from "@/hooks/useRemoveUrl"
 
-export default function Urls() {
+type UrlsProps = {
+  fnRemove: UseMutationResult<boolean, Error, RemoveUrlArgs, unknown>
+}
+
+export default function Urls({fnRemove}: UrlsProps) {
 
   const urls = useUrlStore(state => state.urls)
   const incrementAccess = useUrlStore(state => state.incrementAccess)
-  const removeUrl = useUrlStore(state => state.removeUrl)
+  // const removeUrl = useUrlStore(state => state.removeUrl)
 
   return (
-    <ScrollArea.Root className="flex flex-col gap-4 max-h-[50vh] overflow-hidden">
-      <ScrollArea.Viewport className="max-h-[50vh]">
+    <ScrollArea.Root className="flex flex-col gap-4 max-h-[60vh] pr-3 overflow-hidden">
+      <ScrollArea.Viewport className="max-h-[60vh]">
           {urls?.map((url) => (
               <div key={url.id} className="flex justify-between items-center py-4 border-t border-gray-200">
                   <div className="flex flex-col gap-2">
@@ -31,7 +37,8 @@ export default function Urls() {
                               position: "bottom-right"
                             } )
                           }}   />
-                          <Button className="h-8" icon={<IconTrash size={16} className="text-gray-600" />} secondary onClick={() => { if (window.confirm(`Você realmente quer apargar o link ${url.shortenedUrl} ?`)) removeUrl(url.id) } } />
+                          <Button className="h-8" icon={<IconTrash size={16} className="text-gray-600" />} secondary onClick={() => { if (window.confirm(`Você realmente quer apargar o link ${url.shortenedUrl} ?`)) 
+                            fnRemove.mutate({ id:url.id}) } } />
                       </div>
                   </div>
               </div>

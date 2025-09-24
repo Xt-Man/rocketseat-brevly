@@ -37,7 +37,7 @@ export const createShortUrlRoute: FastifyPluginAsyncZod = async server => {
       if (isDuplicatedShortUrlError(error))
         return reply
           .status(400)
-          .send({ message: 'Shortened url already exists' })
+          .send({ message: 'Essa URL encurtada já existe' })
     }
   )
 }
