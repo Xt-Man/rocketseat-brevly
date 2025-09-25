@@ -14,7 +14,7 @@
     "pretest": "npm run db:migrate:test",
     "pretest:watch": "npm run db:migrate:test",
     "build": "tsup src",
-    "start": "node dist/infra/http/server.mjs"
+    "start": "node dist/infra/http/server.js"
   },
   "author": "Edgar Bertelli Bottini",
   "license": "ISC",
