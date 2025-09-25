@@ -12,7 +12,9 @@
     "db:studio": "drizzle-kit studio",
     "db:migrate:test": "dotenv -e .env.test -- drizzle-kit migrate",
     "pretest": "npm run db:migrate:test",
-    "pretest:watch": "npm run db:migrate:test"
+    "pretest:watch": "npm run db:migrate:test",
+    "build": "tsup src",
+    "start": "node dist/infra/http/server.mjs"
   },
   "author": "Edgar Bertelli Bottini",
   "license": "ISC",
@@ -23,6 +25,7 @@
     "@types/node": "^24.3.3",
     "dotenv-cli": "^10.0.0",
     "drizzle-kit": "^0.31.4",
+    "tsup": "^8.5.0",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
     "vite-tsconfig-paths": "^5.1.4",
