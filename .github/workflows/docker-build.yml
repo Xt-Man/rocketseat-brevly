@@ -24,6 +24,25 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+    - name: Build for Trivy Scan
+      id: build-for-trivy
+      uses: docker/build-push-action@v6
+      with:
+        context: ./server
+        load: true
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/brevly-server:scan
+
+    - name: Run Trivy vulnerability scanner
+      id: trivy-scan
+      uses: aquasecurity/trivy-action@0.33.1
+      with:
+        image-ref: '${{ secrets.DOCKERHUB_USERNAME }}/brevly-server:scan'
+        format: 'table'
+        # exit-code: '1'
+        ignore-unfixed: true
+        vuln-type: 'os,library'
+        severity: 'CRITICAL,HIGH'
+
     - name: Build and Push Docker Image
       id: build-and-push
       uses: docker/build-push-action@v6
