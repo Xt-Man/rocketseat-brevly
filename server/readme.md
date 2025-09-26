@@ -1,3 +1,6 @@
+# brev.ly server
+
+## backend
 - [X]  Deve ser possível criar um link
     - [X]  Não deve ser possível criar um link com URL encurtada mal formatada
     - [X]  Não deve ser possível criar um link com URL encurtada já existente
@@ -10,3 +13,9 @@
     - [X]  Deve ser gerado um nome aleatório e único para o arquivo
     - [X]  Deve ser possível realizar a listagem de forma performática
     - [X]  O CSV deve ter campos como, URL original, URL encurtada, contagem de acessos e data de criação.
+
+## DevOps
+- [X] Criação de um Dockerfile para containerização da aplicação backend
+- [ ] Configuração do GitHub Actions para:
+    - [ ] Fazer o build da aplicação
+    - [ ] Criar e publicar a imagem Docker no Docker Hub
