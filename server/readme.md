@@ -16,6 +16,6 @@
 
 ## DevOps
 - [X] Criação de um Dockerfile para containerização da aplicação backend
-- [ ] Configuração do GitHub Actions para:
-    - [ ] Fazer o build da aplicação
-    - [ ] Criar e publicar a imagem Docker no Docker Hub
+- [X] Configuração do GitHub Actions para:
+    - [X] Fazer o build da aplicação
+    - [X] Criar e publicar a imagem Docker no Docker Hub
