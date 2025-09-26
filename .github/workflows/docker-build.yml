@@ -24,12 +24,18 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+    - name: Set up Docker Buildx
+      id: setup-docker-buildx
+      uses: docker/setup-buildx-action@v3.11.1
+
     - name: Build for Trivy Scan
       id: build-for-trivy
       uses: docker/build-push-action@v6
       with:
         context: ./server
         load: true
+        cache-from: type:gha
+        cache-to: type=gha,mode=max
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/brevly-server:scan
 
     - name: Run Trivy vulnerability scanner
@@ -49,4 +55,5 @@ jobs:
       with:
         context: ./server
         push: true
+        cache-from: type:gha
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/brevly-server:latest
