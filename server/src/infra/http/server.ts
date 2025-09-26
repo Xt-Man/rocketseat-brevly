@@ -38,9 +38,10 @@ server.setErrorHandler((error, _request, reply) => {
   return reply.status(500).send({ maesage: 'Internal server error.' })
 })
 
-server.register(fastifyCors, { origin: '*',
-  methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH', 'OPTIONS'] 
- })
+server.register(fastifyCors, {
+  origin: '*',
+  methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH', 'OPTIONS']
+})
 server.register(fastifyMultipart)
 server.register(fastifySwagger, {
   openapi: {
@@ -64,7 +65,7 @@ server.register(getOriginalUrlByShortRoute)
 server.register(listShortUrlsRoute)
 server.register(exportUrlsCsvRoute)
 
-console.log(env.DATABASE_URL)
+//console.log(env.DATABASE_URL)
 
 server
   .listen({
